@@ -26,20 +26,23 @@ const getGames = async (req: any) => {
         
         // Fetch data from the database with the specified parameters
         const results = await query(`SELECT * FROM Games LIMIT ${startIndex}, ${limit}`);
-        console.log(results);
+        const resultCount = results.length;
+        // Get result count
+        const totalCount = await query(`SELECT COUNT(*) FROM Games`);
+        let pagination = {
+                "index": startIndex,
+                "pageSize": limit,
+                "resultCount": resultCount,
+                "totalCount": totalCount[0]['count(*)'],
+        }
+        let returns = {
+            "data": results,
+            "pagination": pagination
+            
+        }
+        console.log(returns)
         return results;
     } catch (error) {
         throw error;
     }
 };
-
-/*
-const getGames = async () => {
-    try {
-        const results = await query('SELECT * FROM Games');
-        console.log(results);
-    } catch (error) {
-        console.error(error);
-    }
-};
-*/
