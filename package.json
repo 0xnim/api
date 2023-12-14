@@ -1,0 +1,21 @@
+{
+  "name": "api",
+  "module": "./src/index.ts",
+  "type": "module",
+  "scripts": {
+    "dev": "bun run --watch src/index.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.4",
+    "bun-types": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@elysiajs/cors": "^0.7.2",
+    "dotenv": "^16.3.1",
+    "elysia": "^0.7.30",
+    "mysql2": "^3.6.5"
+  }
+}
