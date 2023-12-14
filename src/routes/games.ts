@@ -1,4 +1,4 @@
-import { Elysia, t } from 'elysia'
+import { Elysia, NotFoundError, t } from 'elysia'
 import { query } from '../handlers/db';
 import { ValidationError } from '../handlers/error-handler';
 
@@ -7,6 +7,7 @@ export const games = (app: Elysia) =>
         .group('/games', (app) =>
             app
                 .get('/', getGames)
+                .get('/:id', ({ params: { id } }) => getGame(id))
                 
         )
 
@@ -40,9 +41,22 @@ const getGames = async (req: any) => {
             "pagination": pagination
             
         }
-        console.log(returns)
         return results;
     } catch (error) {
         throw error;
     }
 };
+
+const getGame = async(id: any) => {
+    try {
+        const results = await query(`SELECT * FROM Games WHERE id = ${id}`);
+        if (results.length === 0) {
+            throw new NotFoundError();
+        }
+        return results;
+    }   catch (error) {
+        throw error;
+    }
+}
+    
+
