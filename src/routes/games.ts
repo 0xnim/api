@@ -18,23 +18,18 @@ const getGames = async (req: any) => {
         // Parsing index and pageSize as integers
         const startIndex = parseInt(index, 10);
         const limit = parseInt(pageSize, 10);
-
+        
         // Validate the parameters
         if (isNaN(startIndex) || isNaN(limit) || startIndex < 0 || limit <= 0 || startIndex + limit > 10000) {
-            return ;
+            throw new ValidationError('Invalid query parameters') ;
         }
-
+        
         // Fetch data from the database with the specified parameters
         const results = await query(`SELECT * FROM Games LIMIT ${startIndex}, ${limit}`);
         console.log(results);
         return results;
     } catch (error) {
-        throw new ValidationError(
-            
-        );
-        console.error(error);
-        //set.status = 500;
-        //set.body = 'Internal Server Error';
+        throw error;
     }
 };
 

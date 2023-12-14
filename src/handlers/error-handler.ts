@@ -13,12 +13,25 @@ const errorMapping: ErrorMapping = {
 };
 
 export const errorHandler = (app: Elysia) => {
- app.onError(({ code, error, set }) => {
-   const { status, message } = errorMapping[code] || { status: 500, message: 'Unknown error' };
-   set.status = status;
-   return { status: 'error', message };
- });
+  app.onError(({ code, error, set }) => {
+    let status: number;
+    let message: string;
+
+    // if error in error mapping, use that, otherwise use generic error
+    if (errorMapping[code]) {
+      const { status: mappedStatus, message: mappedMessage } = errorMapping[code];
+      status = mappedStatus;
+      message = mappedMessage;
+    } else {
+      status = error.status || 500;
+      message = error.message || 'Unknown error';
+    }
+
+    set.status = status;
+    return { status: 'error', message };
+  });
 };
+
 
 export class AuthenticationError extends Error {
  constructor(public message: string) {
@@ -39,8 +52,18 @@ export class InvariantError extends Error {
 }
 
 export class ValidationError extends Error {
-  constructor(public message: string) {
-    super(message);
+  code = 'VALIDATION_ERROR';
+  status = 400;
+
+  constructor(message?: string) {
+      super(message ?? 'VALIDATION_ERROR');
   }
- }
- 
+
+  get error() {
+      return {
+          code: this.code,
+          error: this.message,
+          status: this.status
+      };
+  }
+}
